@@ -10,14 +10,19 @@ import java.util.Objects;
 @Setter
 @ToString
 @Table(name = "dishes")
+@NoArgsConstructor
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class Dish {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @NonNull
     private String name;
 
+    @NonNull
     private String description;
 
     @Override
@@ -29,11 +34,11 @@ public class Dish {
             return false;
         }
         Dish dish = (Dish) o;
-        return id == dish.id && Objects.equals(name, dish.name) && Objects.equals(description, dish.description);
+        return id == dish.id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description);
+        return Objects.hash(id);
     }
 }

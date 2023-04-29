@@ -3,6 +3,7 @@ package ru.job4j.dish.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.dish.exception.DishDoesNotExistException;
 import ru.job4j.dish.model.Dish;
@@ -42,7 +43,6 @@ public class DishController {
         if (dish.getDescription() != null) {
             dishInDb.setDescription(dish.getDescription());
         }
-
         dishService.update(dish);
         return ResponseEntity.ok().build();
     }
