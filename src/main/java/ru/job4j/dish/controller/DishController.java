@@ -42,8 +42,7 @@ public class DishController {
         if (dish.getDescription() != null) {
             dishInDb.setDescription(dish.getDescription());
         }
-
-        dishService.update(dish);
+        dishService.update(dishInDb);
         return ResponseEntity.ok().build();
     }
 
