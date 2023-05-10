@@ -1,5 +1,8 @@
 package ru.job4j.dish.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,16 +17,20 @@ import java.util.Optional;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/dish")
+@Tag(name = "Контролер для манипуляции списком блюд",
+        description = "Контроллер обрабатывает запросы на создание, чтение, обновление и удаление блюд")
 public class DishController {
 
     private DishServiceImpl dishService;
 
+    @Operation(summary = "Сохранить", description = "Позволяет сохранить блюдо")
     @PostMapping("/save")
     public ResponseEntity<Void> save(@RequestBody Dish dish) {
         dishService.save(dish);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Обновить полностью", description = "Позволяет обновить все поля блюда")
     @PostMapping("/update")
     public ResponseEntity<Void> updateEntire(@RequestBody Dish dish) {
         dishService.findById(dish.getId())
@@ -32,6 +39,7 @@ public class DishController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "Обновить частично", description = "Позволяет обновить часть полей блюда")
     @PatchMapping("/update")
     public ResponseEntity<Void> updatePartly(@RequestBody Dish dish) {
         Dish dishInDb = dishService.findById(dish.getId())
@@ -46,14 +54,16 @@ public class DishController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "Удалить", description = "Позволяет удалить блюдо")
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> delete(@PathVariable int id) {
+    public ResponseEntity<Void> delete(@Parameter(description = "Уникальный идентификатор") @PathVariable int id) {
         dishService.findById(id)
                 .orElseThrow(() -> new DishDoesNotExistException("Such a dish doesn't exist in database."));
         dishService.delete(id);
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "Показать все", description = "Позволяет загрузить все блюда")
     @GetMapping("/findAll")
     public ResponseEntity<List<Dish>> findAll() {
         List<Dish> dishes = dishService.findAll();
@@ -64,15 +74,17 @@ public class DishController {
         return response;
     }
 
+    @Operation(summary = "Найти по ID", description = "Позволяет найти блюдо по ID")
     @GetMapping("/findById/{id}")
-    public ResponseEntity<Dish> findById(@PathVariable int id) {
+    public ResponseEntity<Dish> findById(@Parameter(description = "Уникальный идентификатор") @PathVariable int id) {
         Optional<Dish> optionalDish = dishService.findById(id);
         return new ResponseEntity<>(optionalDish.orElse(new Dish()),
                 optionalDish.isPresent() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
     }
 
+    @Operation(summary = "Найти по названию", description = "Позволяет найти блюдо по названию")
     @GetMapping("/findByName/{name}")
-    public ResponseEntity<Dish> findByName(@PathVariable String name) {
+    public ResponseEntity<Dish> findByName(@Parameter(description = "Название") @PathVariable String name) {
         Optional<Dish> optionalDish = dishService.findByName(name);
         return new ResponseEntity<>(optionalDish.orElse(new Dish()),
                 optionalDish.isPresent() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
